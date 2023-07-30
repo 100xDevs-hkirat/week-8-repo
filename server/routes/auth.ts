@@ -2,11 +2,18 @@ import jwt from "jsonwebtoken";
 import express from 'express';
 import { authenticateJwt, SECRET } from "../middleware/";
 import { User } from "../db";
+import { userInputSchema, userIDSchema } from '../validator';
 
 const router = express.Router();
 
   router.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
+    // validate body
+    const parsedBody = userInputSchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      return res.status(400).json({ error: parsedBody.error.message });
+    }
+
+    const { username, password } = parsedBody.data;
     const user = await User.findOne({ username });
     if (user) {
       res.status(403).json({ message: 'User already exists' });
@@ -19,7 +26,12 @@ const router = express.Router();
   });
   
   router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    // validate body
+    const parsedBody = userInputSchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      return res.status(400).json({ error: parsedBody.error.message });
+    }
+    const { username, password } = parsedBody.data;
     const user = await User.findOne({ username, password });
     if (user) {
       const token = jwt.sign({ id: user._id }, SECRET, { expiresIn: '1h' });
@@ -29,14 +41,20 @@ const router = express.Router();
     }
   });
 
-    router.get('/me', authenticateJwt, async (req, res) => {
-      const userId = req.headers["userId"];
-      const user = await User.findOne({ _id: userId });
-      if (user) {
-        res.json({ username: user.username });
-      } else {
-        res.status(403).json({ message: 'User not logged in' });
-      }
-    });
+  router.get('/me', authenticateJwt, async (req, res) => {
+    // validate headers
+    const parsedHeaders = userIDSchema.safeParse(req.headers);
+    if (!parsedHeaders.success) {
+      return res.status(400).json({ error: parsedHeaders.error.message });
+    }
 
-  export default router
+    const userId = req.headers["userId"];
+    const user = await User.findOne({ _id: userId });
+    if (user) {
+      res.json({ username: user.username });
+    } else {
+      res.status(403).json({ message: 'User not logged in' });
+    }
+  });
+
+  export default router;
