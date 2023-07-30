@@ -1,6 +1,7 @@
 import express from 'express';
 import { authenticateJwt, SECRET } from "../middleware/index";
 import { Todo } from "../db";
+import { createTodoInputSchema, userIDSchema, todoIdSchema } from '../validator';
 const router = express.Router();
 
 interface CreateTodoInput {
@@ -9,6 +10,16 @@ interface CreateTodoInput {
 }
 
 router.post('/todos', authenticateJwt, (req, res) => {
+  // validate headers and body
+  const parsedBody = createTodoInputSchema.safeParse(req.body);
+  const parsedHeaders = userIDSchema.safeParse(req.headers);
+  if (!parsedBody.success) {
+    return res.status(400).json({ error: parsedBody.error.message });
+  }
+  if (!parsedHeaders.success) {
+    return res.status(400).json({ error: parsedHeaders.error.message });
+  }
+
   const { title, description } = req.body;
   const done = false;
   const userId = req.headers["userId"];
@@ -26,6 +37,11 @@ router.post('/todos', authenticateJwt, (req, res) => {
 
 
 router.get('/todos', authenticateJwt, (req, res) => {
+  // validate headers
+  const parsedHeaders = userIDSchema.safeParse(req.headers);
+  if (!parsedHeaders.success) {
+    return res.status(400).json({ error: parsedHeaders.error.message });
+  }
   const userId = req.headers["userId"];
 
   Todo.find({ userId })
@@ -38,6 +54,16 @@ router.get('/todos', authenticateJwt, (req, res) => {
 });
 
 router.patch('/todos/:todoId/done', authenticateJwt, (req, res) => {
+  // validate headers and params
+  const parsedHeaders = userIDSchema.safeParse(req.headers);
+  const parsedParams = todoIdSchema.safeParse(req.params);
+  if (!parsedHeaders.success) {
+    return res.status(400).json({ error: parsedHeaders.error.message });
+  }
+  if (!parsedParams.success) {
+    return res.status(400).json({ error: parsedParams.error.message });
+  }
+
   const { todoId } = req.params;
   const userId = req.headers["userId"];
 
