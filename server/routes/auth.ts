@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import express from 'express';
 import { authenticateJwt, SECRET } from "../middleware/";
 import { User } from "../db";
-import { signupInput } from "@100xdevs/common"
+import { signupInput, SignupParams } from "@100xdevs/common"
 
 const router = express.Router();
 
@@ -10,7 +10,8 @@ router.post('/signup', async (req, res) => {
     let parsedInput = signupInput.safeParse(req.body)
     if (!parsedInput.success) {
       return res.status(403).json({
-        msg: "error"
+        msg: "Validation Error",
+        err: parsedInput.error
       });
     }
     const username = parsedInput.data.username 
@@ -28,7 +29,14 @@ router.post('/signup', async (req, res) => {
   });
   
   router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const parsedInput = signupInput.safeParse(req.body);
+    if (!parsedInput.success) {
+      return res.status(403).json({
+        msg: "Validation Error",
+        err: parsedInput.error
+      });
+    }
+    const {username, password} = parsedInput.data;
     const user = await User.findOne({ username, password });
     if (user) {
       const token = jwt.sign({ id: user._id }, SECRET, { expiresIn: '1h' });
