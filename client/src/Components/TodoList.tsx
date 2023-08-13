@@ -11,10 +11,8 @@ export type Todo = {
     done: boolean;
 }
 
-// type TodoArray = Todo[];
 
 const TodoList: React.FC = () => {
-    // const [todos, setTodos] = useState<TodoArray>([]);
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
