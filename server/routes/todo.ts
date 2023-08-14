@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticateJwt, SECRET } from "../middleware/index";
 import { Todo } from "../db";
 import { z } from 'zod';
+import { todoObj, todoParams } from '@shawakash/common2';
 const router = express.Router();
 
 interface CreateTodoInput {
@@ -15,14 +16,14 @@ export const todoInput = z.object({
 })
 
 router.post('/todos', authenticateJwt, (req, res) => {
-  const parsedInput = todoInput.safeParse(req.body);
+  const parsedInput = todoObj.safeParse(req.body);
   if(!parsedInput.success) {
     return res.status(403).json({
       msg: "Validation Error",
       err: parsedInput.error
     });
   }
-  const { title, description } = parsedInput.data;
+  const { title, description }: todoParams = parsedInput.data;
   const done = false;
   const userId = req.headers["userId"];
 

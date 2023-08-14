@@ -3,6 +3,7 @@ import { authState } from '../store/authState.js';
 import {useRecoilValue} from "recoil";
 import { useFetch } from './useFetch.js';
 import { useNavigate } from 'react-router-dom';
+import { todoParams } from '@shawakash/common2';
 
 export type Todo = {
     _id: string;
@@ -17,13 +18,14 @@ const TodoList: React.FC = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const authStateValue = useRecoilValue(authState);
-
+    
     const [todos, setTodos, loading] = useFetch<Todo>("http://localhost:3000/todo/todos")
     const addTodo = async () => {
+        const reqBody: todoParams = {title, description}
         const response = await fetch('http://localhost:3000/todo/todos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem("token")}` },
-            body: JSON.stringify({ title, description })
+            body: JSON.stringify(reqBody)
         });
         const data = await response.json();
 

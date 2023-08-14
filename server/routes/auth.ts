@@ -2,12 +2,21 @@ import jwt from "jsonwebtoken";
 import express from 'express';
 import { authenticateJwt, SECRET } from "../middleware/";
 import { User } from "../db";
-import { signupInput, SignupParams } from "@100xdevs/common"
+// import { signupInput, SignupParams } from "@100xdevs/common"
+// import { z } from "zod";
+import { userObj } from "@shawakash/common2";
 
 const router = express.Router();
 
+// const signupInput = z.object({
+//   username: z.string(),
+//   password: z.string()
+// });
+
+// type SignupParams = z.infer<typeof signupInput>
+
 router.post('/signup', async (req, res) => {
-    let parsedInput = signupInput.safeParse(req.body)
+    let parsedInput = userObj.safeParse(req.body);
     if (!parsedInput.success) {
       return res.status(403).json({
         msg: "Validation Error",
@@ -29,7 +38,7 @@ router.post('/signup', async (req, res) => {
   });
   
   router.post('/login', async (req, res) => {
-    const parsedInput = signupInput.safeParse(req.body);
+    const parsedInput = userObj.safeParse(req.body);
     if (!parsedInput.success) {
       return res.status(403).json({
         msg: "Validation Error",

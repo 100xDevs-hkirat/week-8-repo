@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@100xdevs/common@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@100xdevs/common/-/common-1.0.2.tgz#36fb155d02cf8a8504fd68f32977350a517340e1"
-  integrity sha512-vp3NRIJr+p6twhYlsW492Z3XyOabgK4KbgxlU76GoDMbtwVenjcKYk3x5l+5OC1j1anbmfNC32awDzPD1cnSDQ==
+"@shawakash/common2@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@shawakash/common2/-/common2-1.0.4.tgz#a233a718c037b6c109610c9c595493464f149145"
+  integrity sha512-Eyqh8QYU0r1E8rJ8i9p87E+DfDxlARoCn2oCM0gy3ADYYWX7dU0jzqwu7J1W9O0+nZWoLV+r1wx+6sUJ/qJByg==
   dependencies:
     zod "^3.21.4"
 

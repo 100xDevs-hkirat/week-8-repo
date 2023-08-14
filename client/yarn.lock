@@ -2,13 +2,6 @@
 # yarn lockfile v1
 
 
-"@100xdevs/common@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@100xdevs/common/-/common-1.0.1.tgz"
-  integrity sha512-BS0wVJXmy9C8Ibf8aMBnomf4Q6yonPbkyiJwmFyW+vwQxD//hEtT3tqvTgLrxIe0aLynV1aWPwrQ1VRcfuUZRA==
-  dependencies:
-    zod "^3.21.4"
-
 "@aashutoshrathi/word-wrap@^1.2.3":
   version "1.2.6"
   resolved "https://registry.npmjs.org/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz"
@@ -442,6 +435,13 @@
   version "1.7.2"
   resolved "https://registry.npmjs.org/@remix-run/router/-/router-1.7.2.tgz"
   integrity sha512-7Lcn7IqGMV+vizMPoEl5F0XDshcdDYtMI6uJLQdQz5CfZAwy3vvGKYSUk789qndt5dEC4HfSjviSYlSoHGL2+A==
+
+"@shawakash/common2@^1.0.2":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@shawakash/common2/-/common2-1.0.4.tgz#a233a718c037b6c109610c9c595493464f149145"
+  integrity sha512-Eyqh8QYU0r1E8rJ8i9p87E+DfDxlARoCn2oCM0gy3ADYYWX7dU0jzqwu7J1W9O0+nZWoLV+r1wx+6sUJ/qJByg==
+  dependencies:
+    zod "^3.21.4"
 
 "@types/json-schema@^7.0.12":
   version "7.0.12"
@@ -1571,5 +1571,5 @@ yocto-queue@^0.1.0:
 
 zod@^3.21.4:
   version "3.21.4"
-  resolved "https://registry.npmjs.org/zod/-/zod-3.21.4.tgz"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==

@@ -1,0 +1,9 @@
+{
+  "name": "@shawakash/common2",
+  "version": "1.0.4",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.21.4"
+  }
+}
