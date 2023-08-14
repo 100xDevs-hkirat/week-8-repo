@@ -1,39 +1,31 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { authState } from '../store/authState.js';
 import {useRecoilValue} from "recoil";
+import { useFetch } from './useFetch.js';
+import { useNavigate } from 'react-router-dom';
+import { todoParams } from '@shawakash/common2';
 
-interface Todo {
+export type Todo = {
     _id: string;
     title: string;
     description: string;
     done: boolean;
 }
 
-type TodoArray = Todo[];
 
-const TodoList = () => {
-    const [todos, setTodos] = useState<TodoArray>([]);
+const TodoList: React.FC = () => {
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const authStateValue = useRecoilValue(authState);
-
-    useEffect(() => {
-        const getTodos = async () => {
-            const response = await fetch('http://localhost:3000/todo/todos', {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-            });
-            // Todo: Create a type for the response that you get back from the server
-            const data: Todo[] = await response.json();
-            setTodos(data);
-        };
-        getTodos();
-    }, []);
-
+    
+    const [todos, setTodos, loading] = useFetch<Todo>("http://localhost:3000/todo/todos")
     const addTodo = async () => {
+        const reqBody: todoParams = {title, description}
         const response = await fetch('http://localhost:3000/todo/todos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem("token")}` },
-            body: JSON.stringify({ title, description })
+            body: JSON.stringify(reqBody)
         });
         const data = await response.json();
 
@@ -46,7 +38,7 @@ const TodoList = () => {
         setTodos(newTodos);
     };
 
-    const markDone = async (id) => {
+    const markDone = async (id: string) => {
         const response = await fetch(`http://localhost:3000/todo/todos/${id}/done`, {
             method: 'PATCH',
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -62,7 +54,7 @@ const TodoList = () => {
                 <div style={{marginTop: 25, marginLeft: 20}}>
                     <button onClick={() => {
                         localStorage.removeItem("token");
-                        window.location = "/login";
+                        navigate("/login")
                     }}>Logout</button>
                 </div>
             </div>
