@@ -1,56 +1,74 @@
-import express from 'express';
-import { authenticateJwt, SECRET } from "../middleware/index";
-import { Todo } from "../db";
-const router = express.Router();
+import express from 'express'
+import { authenticateJwt } from '../middleware/index'
+const router = express.Router()
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 interface CreateTodoInput {
-  title: string;
-  description: string;
+  title: string
+  description: string
 }
 
-router.post('/todos', authenticateJwt, (req, res) => {
-  const { title, description } = req.body;
-  const done = false;
-  const userId = req.headers["userId"];
+router.post('/todos', authenticateJwt, async (req, res) => {
+  const { title, description } = req.body
+  const userId: any = req.headers['userId']
 
-  const newTodo = new Todo({ title, description, done, userId });
-
-  newTodo.save()
-    .then((savedTodo) => {
-      res.status(201).json(savedTodo);
+  try {
+    const newTodo = await prisma.todo.create({
+      data: {
+        title: title,
+        description: description,
+        published: false,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
     })
-    .catch((err) => {
-      res.status(500).json({ error: 'Failed to create a new todo' });
-    });
-});
+    res.status(201).json({ msg: 'Todo created successfully', newTodo })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create a new todo' })
+  }
+})
 
+router.get('/todos', authenticateJwt, async (req, res) => {
+  const userId: any = req.headers['userId']
 
-router.get('/todos', authenticateJwt, (req, res) => {
-  const userId = req.headers["userId"];
-
-  Todo.find({ userId })
-    .then((todos) => {
-      res.json(todos);
+  try {
+    const todos = await prisma.todo.findMany({
+      where: { id: parseInt(userId) },
     })
-    .catch((err) => {
-      res.status(500).json({ error: 'Failed to retrieve todos' });
-    });
-});
 
-router.patch('/todos/:todoId/done', authenticateJwt, (req, res) => {
-  const { todoId } = req.params;
-  const userId = req.headers["userId"];
+    res.status(200).json({ todos })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve todos' })
+  }
+})
 
-  Todo.findOneAndUpdate({ _id: todoId, userId }, { done: true }, { new: true })
-    .then((updatedTodo) => {
-      if (!updatedTodo) {
-        return res.status(404).json({ error: 'Todo not found' });
-      }
-      res.json(updatedTodo);
+router.patch('/todos/:todoId/published', authenticateJwt, async (req, res) => {
+  const { todoId } = req.params
+  const userId: any = req.headers['userId']
+
+  try {
+    const updatedTodo = await prisma.todo.update({
+      where: {
+        id: parseInt(todoId),
+        userId: parseInt(userId),
+      },
+      data: {
+        published: true,
+      },
     })
-    .catch((err) => {
-      res.status(500).json({ error: 'Failed to update todo' });
-    });
-});
 
-export default router;
+    if (!updatedTodo) {
+      return res.status(404).json({ error: 'Todo not found' })
+    }
+    res.json({ msg: 'Todo updated', updatedTodo })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update todo' })
+  }
+})
+
+export default router
